@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="static/icons/logo.png" alt="Clextron Logo" width="180" />
+
 # 🤖 Clextron
 
 ### Autonomous AI Agents for Students Worldwide
