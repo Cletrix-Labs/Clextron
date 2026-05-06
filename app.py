@@ -8,7 +8,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 
-from agents.research_agent import research_topic
+from agents.research_agent import research_topic, SUPPORTED_LANGUAGES
+from agents.language_agent import explain_concept
 
 
 load_dotenv()
@@ -26,10 +27,23 @@ app.add_middleware(
 
 class ResearchRequest(BaseModel):
     topic: str = Field(..., min_length=1, description="Topic to research")
+    language: str = Field(default="english", description="Language for response (e.g., english, hindi, tamil, spanish, french)")
 
 
 class ResearchResponse(BaseModel):
     topic: str
+    language: str
+    result: str
+
+
+class ExplainRequest(BaseModel):
+    concept: str = Field(..., min_length=1, description="Concept to explain")
+    language: str = Field(default="english", description="Language for explanation")
+
+
+class ExplainResponse(BaseModel):
+    concept: str
+    language: str
     result: str
 
 
@@ -310,10 +324,22 @@ def health() -> AppStatus:
 @app.post("/research", response_model=ResearchResponse)
 def research(request: ResearchRequest) -> ResearchResponse:
     try:
-        result = research_topic(request.topic)
+        result = research_topic(request.topic, request.language)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except Exception as exc:  # pragma: no cover - runtime guard for model failures
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
-    return ResearchResponse(topic=request.topic, result=result)
+    return ResearchResponse(topic=request.topic, language=request.language, result=result)
+
+
+@app.post("/explain", response_model=ExplainResponse)
+def explain(request: ExplainRequest) -> ExplainResponse:
+    try:
+        result = explain_concept(request.concept, request.language)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:  # pragma: no cover - runtime guard for model failures
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+    return ExplainResponse(concept=request.concept, language=request.language, result=result)
