@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Clextron — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080808;--bg2:#0f0f0f;--bg3:#141414;--bg4:#1a1a1a;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+  --text:#fff;--muted:rgba(255,255,255,0.4);--dim:rgba(255,255,255,0.15);
+  --accent:#6366f1;--accent2:#818cf8;--green:#22c55e;--mono:'Geist Mono',monospace;
+}
+body{background:var(--bg);color:var(--text);font-family:'Geist',sans-serif;font-size:14px;line-height:1.6;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+button,input,select{font-family:inherit}
+
+/* TOP BAR */
+.topbar{height:52px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px;flex-shrink:0;background:var(--bg)}
+.logo{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500;text-decoration:none;color:var(--text);margin-right:8px}
+.logo-box{width:22px;height:22px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600}
+.top-sep{width:0.5px;height:18px;background:var(--border2);margin:0 4px}
+.top-links{display:flex;align-items:center;gap:2px}
+.tlink{padding:5px 10px;border-radius:6px;font-size:13px;color:var(--muted);cursor:pointer;text-decoration:none;transition:all .15s;border:none;background:none}
+.tlink:hover{background:rgba(255,255,255,0.05);color:var(--text)}
+.tlink.active{background:rgba(99,102,241,0.12);color:#a5b4fc}
+.top-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.search{background:var(--bg2);border:0.5px solid var(--border);border-radius:7px;padding:6px 12px;color:var(--text);font-size:12px;width:200px;outline:none}
+.search::placeholder{color:var(--dim)}
+.search:focus{border-color:rgba(99,102,241,0.4)}
+.avatar{width:28px;height:28px;border-radius:50%;background:rgba(99,102,241,0.2);border:0.5px solid rgba(99,102,241,0.4);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:#a5b4fc;cursor:pointer}
+
+/* LAYOUT */
+.app{display:flex;flex:1;overflow:hidden}
+
+/* SIDEBAR */
+.sidebar{width:220px;border-right:0.5px solid var(--border);background:var(--bg);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;padding:16px 0}
+.sb-section{margin-bottom:24px}
+.sb-label{font-size:10px;color:var(--dim);letter-spacing:.08em;padding:0 20px;margin-bottom:6px}
+.sitem{display:flex;align-items:center;gap:9px;padding:7px 14px 7px 18px;font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s;border-left:2px solid transparent;text-decoration:none}
+.sitem:hover{color:var(--text);background:rgba(255,255,255,0.03)}
+.sitem.active{color:#a5b4fc;background:rgba(99,102,241,0.08);border-left-color:var(--accent)}
+.sitem svg{width:15px;height:15px;flex-shrink:0}
+.sb-bottom{margin-top:auto;border-top:0.5px solid var(--border);padding-top:16px}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;padding:28px 32px;background:var(--bg)}
+.page-title{font-size:20px;font-weight:500;letter-spacing:-.4px;margin-bottom:4px}
+.page-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
+
+/* STATS */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:24px}
+.scard{background:var(--bg2);border:0.5px solid var(--border);border-radius:10px;padding:16px}
+.scard-label{font-size:11px;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between}
+.scard-val{font-size:24px;font-weight:500;letter-spacing:-.8px;margin-bottom:2px}
+.scard-sub{font-size:11px;color:var(--dim)}
+.scard-badge{font-size:10px;padding:2px 7px;border-radius:99px;background:rgba(34,197,94,0.1);color:#4ade80}
+
+/* AGENTS */
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.section-label{font-size:13px;font-weight:500;color:var(--text)}
+.agent-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:24px}
+.acard{background:var(--bg2);border:0.5px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;transition:border-color .2s;position:relative}
+.acard:hover,.acard.on{border-color:rgba(99,102,241,0.4)}
+.acard-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
+.acard-icon{width:32px;height:32px;background:rgba(99,102,241,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.acard-icon svg{width:15px;height:15px;color:#818cf8}
+.toggle{width:32px;height:18px;background:var(--bg4);border-radius:99px;position:relative;cursor:pointer;transition:background .2s;border:0.5px solid var(--border2)}
+.toggle.on{background:var(--accent)}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:#fff;transition:transform .2s}
+.toggle.on::after{transform:translateX(14px)}
+.acard-name{font-size:13px;font-weight:500;margin-bottom:4px}
+.acard-desc{font-size:12px;color:var(--muted);line-height:1.5}
+.acard-status{margin-top:12px;padding-top:12px;border-top:0.5px solid var(--border);display:flex;align-items:center;gap:6px;font-size:11px;color:var(--dim)}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--dim)}
+.acard.on .status-dot{background:var(--green)}
+.acard.on .acard-status{color:var(--muted)}
+
+/* INPUT PANEL */
+.input-panel{background:var(--bg2);border:0.5px solid var(--border);border-radius:12px;padding:20px;margin-bottom:24px}
+.input-row{display:flex;gap:8px;margin-bottom:10px}
+.inp{background:var(--bg3);border:0.5px solid var(--border);border-radius:8px;padding:9px 13px;color:var(--text);font-size:13px;outline:none;transition:border-color .2s;width:100%}
+.inp:focus{border-color:rgba(99,102,241,0.5)}
+.inp::placeholder{color:var(--dim)}
+select.inp{cursor:pointer;flex:0;min-width:130px}
+.run-btn{background:var(--accent);border:none;border-radius:8px;color:#fff;font-size:13px;padding:9px 18px;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;flex-shrink:0;transition:background .2s}
+.run-btn:hover{background:#5558e3}
+.clear-btn{background:transparent;border:0.5px solid var(--border2);border-radius:8px;color:var(--muted);font-size:13px;padding:9px 14px;cursor:pointer;transition:all .2s}
+.clear-btn:hover{color:var(--text);border-color:rgba(255,255,255,0.3)}
+.output-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.output-label{font-size:11px;color:var(--dim);display:flex;align-items:center;gap:6px}
+.output-actions{display:flex;gap:6px}
+.icon-btn{background:none;border:0.5px solid var(--border);border-radius:6px;color:var(--muted);font-size:11px;padding:3px 9px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all .15s}
+.icon-btn:hover{color:var(--text);border-color:var(--border2)}
+.output{background:var(--bg3);border:0.5px solid var(--border);border-radius:8px;padding:16px;min-height:120px;font-family:var(--mono);font-size:12px;color:var(--dim);line-height:1.9;white-space:pre-wrap}
+.output.live{color:rgba(255,255,255,0.75)}
+.thinking{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--accent2);margin-bottom:6px}
+.thinking-dots span{animation:blink 1.2s infinite;display:inline-block}
+.thinking-dots span:nth-child(2){animation-delay:.2s}
+.thinking-dots span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:0}40%{opacity:1}}
+
+/* HISTORY */
+.history-list{display:flex;flex-direction:column;gap:6px}
+.hitem{background:var(--bg2);border:0.5px solid var(--border);border-radius:8px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:border-color .15s}
+.hitem:hover{border-color:var(--border2)}
+.hitem-left{display:flex;align-items:center;gap:10px}
+.hitem-icon{width:26px;height:26px;background:rgba(99,102,241,0.1);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hitem-icon svg{width:12px;height:12px;color:#818cf8}
+.hitem-topic{font-size:13px;color:var(--text)}
+.hitem-lang{font-size:11px;color:var(--muted)}
+.hitem-time{font-size:11px;color:var(--dim)}
+
+svg{display:block}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="logo" href="index.html">
+    <div class="logo-box" style="color:#fff">C</div>
+    Clextron
+  </a>
+  <div class="top-sep"></div>
+  <div class="top-links">
+    <a class="tlink active" href="dashboard.html">Dashboard</a>
+    <a class="tlink" href="#">Docs</a>
+    <a class="tlink" href="https://github.com/Cletrix-Labs/Clextron" target="_blank">GitHub</a>
+  </div>
+  <div class="top-right">
+    <input class="search" placeholder="Search topics..." id="searchInput"/>
+    <div class="avatar">DG</div>
+  </div>
+</div>
+
+<div class="app">
+
+  <nav class="sidebar">
+    <div class="sb-section">
+      <div class="sb-label">AGENTS</div>
+      <a class="sitem active" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a class="sitem" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+        Research
+      </a>
+      <a class="sitem" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5h18M3 12h12M3 19h8"/></svg>
+        Languages
+      </a>
+      <a class="sitem" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        Planner
+      </a>
+      <a class="sitem" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+        Career
+      </a>
+    </div>
+    <div class="sb-section">
+      <div class="sb-label">HISTORY</div>
+      <a class="sitem" href="#" onclick="loadHistory('machine learning')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        Machine learning
+      </a>
+      <a class="sitem" href="#" onclick="loadHistory('neural networks')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        Neural networks
+      </a>
+      <a class="sitem" href="#" onclick="loadHistory('data structures')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        Data structures
+      </a>
+    </div>
+    <div class="sb-bottom">
+      <a class="sitem" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        Settings
+      </a>
+      <a class="sitem" href="index.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        Back to site
+      </a>
+    </div>
+  </nav>
+
+  <main class="main">
+    <div class="page-title">Dashboard</div>
+    <div class="page-sub">Welcome back, Darshan. Your agents are ready.</div>
+
+    <div class="stat-row">
+      <div class="scard">
+        <div class="scard-label">Researches <span class="scard-badge">+12%</span></div>
+        <div class="scard-val">38</div>
+        <div class="scard-sub">this week</div>
+      </div>
+      <div class="scard">
+        <div class="scard-label">Languages used</div>
+        <div class="scard-val">6</div>
+        <div class="scard-sub">Tamil, Hindi, English...</div>
+      </div>
+      <div class="scard">
+        <div class="scard-label">Study hours saved</div>
+        <div class="scard-val">14h</div>
+        <div class="scard-sub">this month</div>
+      </div>
+      <div class="scard">
+        <div class="scard-label">Active agents</div>
+        <div class="scard-val" id="activeCount">1</div>
+        <div class="scard-sub">of 4 total</div>
+      </div>
+    </div>
+
+    <div class="section-head">
+      <div class="section-label">Agents</div>
+      <button class="clear-btn" onclick="toggleAll()">Toggle all</button>
+    </div>
+    <div class="agent-grid">
+      <div class="acard on" id="a1" onclick="toggleAgent('a1')">
+        <div class="acard-top">
+          <div class="acard-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></div>
+          <div class="toggle on" id="t1"></div>
+        </div>
+        <div class="acard-name">Research agent</div>
+        <div class="acard-desc">Searches the web and summarizes any topic automatically in your language.</div>
+        <div class="acard-status"><div class="status-dot"></div> Running</div>
+      </div>
+      <div class="acard" id="a2" onclick="toggleAgent('a2')">
+        <div class="acard-top">
+          <div class="acard-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5h18M3 12h12M3 19h8"/></svg></div>
+          <div class="toggle" id="t2"></div>
+        </div>
+        <div class="acard-name">Language agent</div>
+        <div class="acard-desc">Explains any concept in your native language — 50+ languages supported.</div>
+        <div class="acard-status"><div class="status-dot"></div> Idle</div>
+      </div>
+      <div class="acard" id="a3" onclick="toggleAgent('a3')">
+        <div class="acard-top">
+          <div class="acard-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+          <div class="toggle" id="t3"></div>
+        </div>
+        <div class="acard-name">Study planner</div>
+        <div class="acard-desc">Builds a personalised daily study plan based on your goals and exam dates.</div>
+        <div class="acard-status"><div class="status-dot"></div> Idle</div>
+      </div>
+      <div class="acard" id="a4" onclick="toggleAgent('a4')">
+        <div class="acard-top">
+          <div class="acard-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></div>
+          <div class="toggle" id="t4"></div>
+        </div>
+        <div class="acard-name">Career agent</div>
+        <div class="acard-desc">Resume review, job matching, and interview preparation — tailored to your field.</div>
+        <div class="acard-status"><div class="status-dot"></div> Idle</div>
+      </div>
+    </div>
+
+    <div class="input-panel">
+      <div class="input-row">
+        <input class="inp" id="topicInput" placeholder="Enter a topic — e.g. transformer architecture, photosynthesis, sorting algorithms..."/>
+        <select class="inp" id="langSelect">
+          <option>English</option><option>Tamil</option><option>Hindi</option><option>Telugu</option>
+          <option>Spanish</option><option>French</option><option>Arabic</option><option>Chinese</option>
+          <option>Japanese</option><option>Korean</option><option>German</option><option>Portuguese</option>
+        </select>
+        <button class="run-btn" onclick="runAgent()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M5 3l14 9-14 9V3z"/></svg>
+          Run agent
+        </button>
+        <button class="clear-btn" onclick="clearOutput()">Clear</button>
+      </div>
+      <div class="output-header">
+        <div class="output-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          <span id="outputLabel">Ready — enter a topic and run the agent</span>
+        </div>
+        <div class="output-actions">
+          <button class="icon-btn" onclick="copyOutput()">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copy
+          </button>
+        </div>
+      </div>
+      <div class="output" id="outputBox">Your research output will appear here...</div>
+    </div>
+
+    <div class="section-head">
+      <div class="section-label">Recent searches</div>
+    </div>
+    <div class="history-list">
+      <div class="hitem" onclick="loadHistory('machine learning basics')">
+        <div class="hitem-left">
+          <div class="hitem-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></div>
+          <div>
+            <div class="hitem-topic">Machine learning basics</div>
+            <div class="hitem-lang">Research agent &middot; English</div>
+          </div>
+        </div>
+        <div class="hitem-time">2 hours ago</div>
+      </div>
+      <div class="hitem" onclick="loadHistory('neural networks Tamil')">
+        <div class="hitem-left">
+          <div class="hitem-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5h18M3 12h12M3 19h8"/></svg></div>
+          <div>
+            <div class="hitem-topic">Neural networks</div>
+            <div class="hitem-lang">Language agent &middot; Tamil</div>
+          </div>
+        </div>
+        <div class="hitem-time">Yesterday</div>
+      </div>
+      <div class="hitem" onclick="loadHistory('data structures and algorithms')">
+        <div class="hitem-left">
+          <div class="hitem-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></div>
+          <div>
+            <div class="hitem-topic">Data structures and algorithms</div>
+            <div class="hitem-lang">Research agent &middot; English</div>
+          </div>
+        </div>
+        <div class="hitem-time">2 days ago</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+let activeAgents=1;
+
+function toggleAgent(id){
+  const card=document.getElementById(id);
+  const toggle=document.getElementById('t'+id.slice(1));
+  const dot=card.querySelector('.status-dot');
+  const statusText=card.querySelector('.acard-status');
+  const wasOn=card.classList.contains('on');
+  card.classList.toggle('on');
+  toggle.classList.toggle('on');
+  if(wasOn){activeAgents--;dot.style.background='var(--dim)';statusText.innerHTML='<div class="status-dot"></div> Idle';}
+  else{activeAgents++;dot.style.background='var(--green)';statusText.innerHTML='<div class="status-dot" style="background:var(--green)"></div> Running';}
+  document.getElementById('activeCount').textContent=activeAgents;
+}
+
+function toggleAll(){
+  const cards=['a1','a2','a3','a4'];
+  const anyOff=cards.some(id=>!document.getElementById(id).classList.contains('on'));
+  cards.forEach(id=>{
+    const card=document.getElementById(id);
+    const toggle=document.getElementById('t'+id.slice(1));
+    const statusText=card.querySelector('.acard-status');
+    if(anyOff){
+      card.classList.add('on');toggle.classList.add('on');
+      statusText.innerHTML='<div class="status-dot" style="background:var(--green)"></div> Running';
+    } else {
+      card.classList.remove('on');toggle.classList.remove('on');
+      statusText.innerHTML='<div class="status-dot"></div> Idle';
+    }
+  });
+  activeAgents=anyOff?4:0;
+  document.getElementById('activeCount').textContent=activeAgents;
+}
+
+function runAgent(){
+  const topic=document.getElementById('topicInput').value.trim()||'AI in education';
+  const lang=document.getElementById('langSelect').value;
+  const box=document.getElementById('outputBox');
+  const label=document.getElementById('outputLabel');
+  box.classList.remove('live');
+  box.textContent='';
+  label.textContent='Agent running...';
+
+  const outputs={
+    Tamil:`> ஆராய்ச்சி முடிந்தது: "${topic}"\n\nசுருக்கம்: இந்த தலைப்பு நவீன தொழில்நுட்பத்தில் மிக முக்கியமான அடிப்படை கருத்துக்களை உள்ளடக்கியது.\n\nமுக்கிய புள்ளிகள்:\n  1. அடிப்படை கணித கொள்கைகள்\n  2. நடைமுறை பயன்பாடுகள்\n  3. எதிர்கால ஆராய்ச்சி திசைகள்\n\nபடிப்பு திட்டம்:\n  வாரம் 1 — கோட்பாடு மற்றும் அடிப்படைகள்\n  வாரம் 2 — நடைமுறை செயல்படுத்தல்`,
+    Hindi:`> शोध पूर्ण: "${topic}"\n\nसारांश: यह विषय आधुनिक इंजीनियरिंग और विज्ञान में व्यापक रूप से उपयोग होने वाली मूलभूत अवधारणाओं को कवर करता है।\n\nमुख्य बिंदु:\n  1. मूल गणितीय सिद्धांत\n  2. व्यावहारिक अनुप्रयोग\n  3. वर्तमान शोध दिशाएं\n\nअध्ययन योजना:\n  सप्ताह 1 — सिद्धांत और नींव\n  सप्ताह 2 — व्यावहारिक कार्यान्वयन`,
+    default:`> Research complete: "${topic}" (${lang})\n\nSummary: This topic covers foundational concepts widely used across modern engineering and applied science.\n\nKey concepts:\n  1. Core mathematical principles and theoretical foundations\n  2. Practical real-world applications in industry and academia\n  3. Current research directions and 2026 developments\n  4. Common misconceptions and how to avoid them\n\nRecommended resources:\n  - MIT OpenCourseWare — free lectures\n  - arXiv recent papers — 2025-2026\n  - GitHub repos with implementations\n\nStudy plan:\n  Week 1 — Foundations and theory\n  Week 2 — Hands-on implementation\n  Week 3 — Project and peer review`
+  };
+
+  const result=outputs[lang]||outputs.default;
+  setTimeout(()=>{
+    box.classList.add('live');
+    let i=0;
+    const iv=setInterval(()=>{
+      if(i<result.length){box.textContent=result.substring(0,i+3);i+=3;}
+      else{clearInterval(iv);label.textContent=`Done — research complete in ${lang}`;}
+    },12);
+  },600);
+}
+
+function clearOutput(){
+  const box=document.getElementById('outputBox');
+  const label=document.getElementById('outputLabel');
+  box.classList.remove('live');
+  box.textContent='Your research output will appear here...';
+  label.textContent='Ready — enter a topic and run the agent';
+  document.getElementById('topicInput').value='';
+}
+
+function copyOutput(){
+  navigator.clipboard.writeText(document.getElementById('outputBox').textContent).catch(()=>{});
+}
+
+function loadHistory(topic){
+  document.getElementById('topicInput').value=topic;
+  runAgent();
+}
+
+document.getElementById('topicInput').addEventListener('keydown',e=>{if(e.key==='Enter')runAgent()});
+</script>
+</body>
+</html>

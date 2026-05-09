@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Clextron — AI Agents for Students</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080808;
+  --bg2:#0f0f0f;
+  --bg3:#141414;
+  --border:rgba(255,255,255,0.08);
+  --border2:rgba(255,255,255,0.14);
+  --text:#fff;
+  --muted:rgba(255,255,255,0.4);
+  --dim:rgba(255,255,255,0.15);
+  --accent:#6366f1;
+  --accent2:#818cf8;
+  --mono:'Geist Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Geist',sans-serif;font-size:15px;line-height:1.6;overflow-x:hidden}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(8,8,8,0.85);backdrop-filter:blur(20px);border-bottom:0.5px solid var(--border);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--text);font-size:15px;font-weight:500}
+.logo-box{width:24px;height:24px;background:var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff}
+.nav-links{display:flex;align-items:center;gap:28px}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:13px;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-right{display:flex;align-items:center;gap:8px}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:8px 18px;border-radius:8px;font-size:13px;font-family:inherit;cursor:pointer;transition:all .2s;text-decoration:none;border:0.5px solid var(--border2);background:transparent;color:var(--muted)}
+.btn:hover{color:var(--text);border-color:rgba(255,255,255,0.3)}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn-primary:hover{background:#5558e3;border-color:#5558e3;color:#fff}
+
+/* HERO */
+.hero{text-align:center;padding:100px 40px 72px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(ellipse,rgba(99,102,241,0.12) 0%,transparent 70%);pointer-events:none}
+.badge{display:inline-flex;align-items:center;gap:7px;background:rgba(99,102,241,0.1);border:0.5px solid rgba(99,102,241,0.3);border-radius:99px;padding:5px 14px 5px 8px;font-size:12px;color:#a5b4fc;margin-bottom:32px}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:#6366f1;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.8)}}
+.hero h1{font-size:60px;font-weight:500;line-height:1.08;letter-spacing:-2.5px;margin-bottom:22px;max-width:700px;margin-left:auto;margin-right:auto}
+.hero h1 .accent{color:var(--accent2)}
+.hero-sub{font-size:17px;color:var(--muted);max-width:440px;margin:0 auto 40px;line-height:1.65}
+.hero-btns{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:64px}
+.hero-cmd{display:inline-flex;align-items:center;gap:10px;background:var(--bg2);border:0.5px solid var(--border);border-radius:8px;padding:10px 16px;font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:64px}
+.hero-cmd span{color:var(--accent2)}
+
+/* APP MOCKUP */
+.mockup-wrap{margin:0 40px;border:0.5px solid var(--border);border-radius:16px;overflow:hidden;background:var(--bg2)}
+.mockup-bar{background:#0a0a0a;border-bottom:0.5px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:8px}
+.mac-dot{width:11px;height:11px;border-radius:50%}
+.mockup-url{margin-left:12px;font-family:var(--mono);font-size:11px;color:var(--dim);background:rgba(255,255,255,0.04);border:0.5px solid var(--border);border-radius:6px;padding:3px 12px}
+.mockup-body{display:flex;min-height:360px}
+.sidebar{width:210px;background:#090909;border-right:0.5px solid var(--border);padding:20px 0;flex-shrink:0}
+.sidebar-section{padding:0 12px;margin-bottom:20px}
+.sidebar-label{font-size:10px;color:var(--dim);letter-spacing:.08em;padding:0 8px;margin-bottom:6px}
+.sitem{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:7px;font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s}
+.sitem:hover{background:rgba(255,255,255,0.04);color:var(--text)}
+.sitem.active{background:rgba(99,102,241,0.1);color:#a5b4fc}
+.sitem svg{width:15px;height:15px;flex-shrink:0}
+.main{flex:1;padding:28px}
+.dash-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px}
+.stat{background:var(--bg3);border:0.5px solid var(--border);border-radius:10px;padding:14px}
+.stat-label{font-size:11px;color:var(--muted);margin-bottom:4px}
+.stat-val{font-size:20px;font-weight:500;letter-spacing:-.5px}
+.stat-sub{font-size:11px;color:var(--dim);margin-top:2px}
+.agents-label{font-size:12px;color:var(--muted);margin-bottom:12px}
+.agent-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
+.acard{background:var(--bg3);border:0.5px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:border-color .2s}
+.acard:hover,.acard.on{border-color:rgba(99,102,241,0.45)}
+.acard-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.acard-icon{width:28px;height:28px;background:rgba(99,102,241,0.1);border-radius:7px;display:flex;align-items:center;justify-content:center}
+.acard-icon svg{width:14px;height:14px;color:#818cf8}
+.acard-status{width:7px;height:7px;border-radius:50%;background:var(--dim)}
+.acard.on .acard-status{background:#22c55e}
+.acard-name{font-size:13px;font-weight:500;margin-bottom:3px}
+.acard-desc{font-size:11px;color:var(--muted);line-height:1.5}
+.input-area{display:flex;gap:8px}
+.inp{flex:1;background:var(--bg3);border:0.5px solid var(--border);border-radius:8px;padding:9px 13px;color:var(--text);font-size:13px;font-family:inherit;outline:none;transition:border-color .2s}
+.inp:focus{border-color:rgba(99,102,241,0.5)}
+.inp::placeholder{color:var(--dim)}
+.run{background:var(--accent);border:none;border-radius:8px;color:#fff;font-size:13px;font-family:inherit;padding:9px 18px;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;transition:background .2s}
+.run:hover{background:#5558e3}
+.output{margin-top:10px;background:#0a0a0a;border:0.5px solid var(--border);border-radius:8px;padding:14px;min-height:72px;font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.8}
+.output.live{color:rgba(255,255,255,0.7)}
+
+/* FEATURES */
+.features{padding:80px 40px;border-top:0.5px solid var(--border)}
+.section-eyebrow{font-size:11px;color:var(--accent2);letter-spacing:.1em;margin-bottom:12px}
+.section-title{font-size:38px;font-weight:500;letter-spacing:-1.2px;line-height:1.15;margin-bottom:14px}
+.section-sub{font-size:15px;color:var(--muted);max-width:420px;line-height:1.65;margin-bottom:40px}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:0.5px solid var(--border);border-radius:12px;overflow:hidden}
+.feat{background:var(--bg);padding:28px;transition:background .2s}
+.feat:hover{background:var(--bg2)}
+.feat-icon{width:38px;height:38px;background:rgba(99,102,241,0.1);border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.feat-icon svg{width:18px;height:18px;color:var(--accent2)}
+.feat-name{font-size:14px;font-weight:500;margin-bottom:7px}
+.feat-desc{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* LANGUAGES */
+.languages{padding:80px 40px;border-top:0.5px solid var(--border)}
+.lang-pills{display:flex;flex-wrap:wrap;gap:7px;margin-top:24px;margin-bottom:40px}
+.lpill{background:var(--bg2);border:0.5px solid var(--border);border-radius:99px;padding:5px 14px;font-size:12px;color:var(--muted);cursor:pointer;transition:all .2s}
+.lpill:hover{border-color:rgba(99,102,241,0.4);color:#a5b4fc;background:rgba(99,102,241,0.06)}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat-big{background:var(--bg2);border:0.5px solid var(--border);border-radius:12px;padding:28px;text-align:center}
+.stat-num{font-size:44px;font-weight:500;letter-spacing:-2px;color:var(--text);margin-bottom:4px}
+.stat-name{font-size:13px;color:var(--muted)}
+
+/* OPEN SOURCE */
+.oss{padding:80px 40px;border-top:0.5px solid var(--border)}
+.oss-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:14px;padding:40px;display:flex;align-items:center;justify-content:space-between;gap:40px}
+.oss-left h2{font-size:28px;font-weight:500;letter-spacing:-.8px;margin-bottom:10px}
+.oss-left p{font-size:14px;color:var(--muted);max-width:380px;line-height:1.65}
+.oss-btns{display:flex;gap:8px;margin-top:24px}
+.code-block{background:#080808;border:0.5px solid var(--border);border-radius:10px;padding:20px 24px;font-family:var(--mono);font-size:12px;color:rgba(255,255,255,0.6);line-height:2;flex-shrink:0;min-width:280px}
+.code-block .c{color:var(--dim)}
+.code-block .kw{color:#818cf8}
+.code-block .str{color:#86efac}
+.code-block .fn{color:#67e8f9}
+
+/* FOOTER */
+footer{padding:32px 40px;border-top:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.footer-left{font-size:13px;color:var(--dim)}
+.footer-left strong{color:var(--muted)}
+.footer-links{display:flex;gap:24px}
+.footer-links a{font-size:12px;color:var(--dim);text-decoration:none;transition:color .2s}
+.footer-links a:hover{color:var(--muted)}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.hero h1,.hero-sub,.hero-btns,.hero-cmd{animation:fadeUp .6s ease both}
+.hero-sub{animation-delay:.1s}
+.hero-btns{animation-delay:.2s}
+.hero-cmd{animation-delay:.3s}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="#">
+    <div class="logo-box">C</div>
+    Clextron
+  </a>
+  <div class="nav-links">
+    <a href="#features">Agents</a>
+    <a href="#languages">Languages</a>
+    <a href="#oss">Open Source</a>
+    <a href="dashboard.html">Dashboard</a>
+  </div>
+  <div class="nav-right">
+    <a class="btn" href="dashboard.html">Sign in</a>
+    <a class="btn btn-primary" href="dashboard.html">Get started &rarr;</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="badge">
+    <span class="badge-dot"></span>
+    Open beta &mdash; free for all students
+  </div>
+  <h1>AI agents that work<br>for <span class="accent">every student.</span></h1>
+  <p class="hero-sub">Autonomous research, study planning, and career prep &mdash; in 50+ languages. No prompting required.</p>
+  <div class="hero-btns">
+    <a class="btn btn-primary" href="dashboard.html">Start for free &rarr;</a>
+    <a class="btn" href="https://github.com/Cletrix-Labs/Clextron" target="_blank">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.416 22 12c0-5.523-4.477-10-10-10z"/></svg>
+      GitHub
+    </a>
+  </div>
+  <div class="hero-cmd">
+    <span style="color:var(--dim)">$</span>
+    git clone <span>github.com/Cletrix-Labs/Clextron</span>
+  </div>
+
+  <div class="mockup-wrap">
+    <div class="mockup-bar">
+      <div class="mac-dot" style="background:#ff5f57"></div>
+      <div class="mac-dot" style="background:#febc2e"></div>
+      <div class="mac-dot" style="background:#28c840"></div>
+      <div class="mockup-url">clextron.app &mdash; dashboard</div>
+    </div>
+    <div class="mockup-body">
+      <div class="sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-label">WORKSPACE</div>
+          <div class="sitem active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            Dashboard
+          </div>
+          <div class="sitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+            Research
+          </div>
+          <div class="sitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 8l6 6 6-6"/><circle cx="12" cy="6" r="2"/><path d="M3 18h18"/></svg>
+            Languages
+          </div>
+          <div class="sitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            Planner
+          </div>
+          <div class="sitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+            Career
+          </div>
+        </div>
+      </div>
+      <div class="main">
+        <div class="dash-row">
+          <div class="stat"><div class="stat-label">Sessions</div><div class="stat-val">142</div><div class="stat-sub">this week</div></div>
+          <div class="stat"><div class="stat-label">Researches</div><div class="stat-val">38</div><div class="stat-sub">completed</div></div>
+          <div class="stat"><div class="stat-label">Languages</div><div class="stat-val">50+</div><div class="stat-sub">supported</div></div>
+          <div class="stat"><div class="stat-label">Agents</div><div class="stat-val">4</div><div class="stat-sub">active</div></div>
+        </div>
+        <div class="agents-label">Active agents</div>
+        <div class="agent-grid">
+          <div class="acard on" onclick="this.classList.toggle('on')">
+            <div class="acard-top">
+              <div class="acard-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg></div>
+              <div class="acard-status"></div>
+            </div>
+            <div class="acard-name">Research agent</div>
+            <div class="acard-desc">Auto-searches and summarizes any topic</div>
+          </div>
+          <div class="acard" onclick="this.classList.toggle('on')">
+            <div class="acard-top">
+              <div class="acard-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5h18M3 12h18M3 19h18"/></svg></div>
+              <div class="acard-status"></div>
+            </div>
+            <div class="acard-name">Language agent</div>
+            <div class="acard-desc">Explains in your native language</div>
+          </div>
+          <div class="acard" onclick="this.classList.toggle('on')">
+            <div class="acard-top">
+              <div class="acard-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+              <div class="acard-status"></div>
+            </div>
+            <div class="acard-name">Study planner</div>
+            <div class="acard-desc">Builds your daily schedule</div>
+          </div>
+          <div class="acard" onclick="this.classList.toggle('on')">
+            <div class="acard-top">
+              <div class="acard-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></div>
+              <div class="acard-status"></div>
+            </div>
+            <div class="acard-name">Career agent</div>
+            <div class="acard-desc">Resume, jobs, interview prep</div>
+          </div>
+        </div>
+        <div class="input-area">
+          <input class="inp" id="topic" placeholder="Enter a topic to research..."/>
+          <select class="inp" style="flex:0;min-width:120px">
+            <option>English</option><option>Tamil</option><option>Hindi</option><option>Spanish</option><option>French</option><option>Arabic</option>
+          </select>
+          <button class="run" onclick="runAgent()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M5 3l14 9-14 9V3z"/></svg>
+            Run agent
+          </button>
+        </div>
+        <div class="output" id="output">Output will appear here after the agent runs...</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="features" id="features">
+  <div class="section-eyebrow">AGENTS</div>
+  <h2 class="section-title">Four agents.<br>One platform.</h2>
+  <p class="section-sub">Each agent is autonomous — it acts, searches, and delivers without you prompting every step.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></div>
+      <div class="feat-name">Research agent</div>
+      <div class="feat-desc">Searches the web, reads papers, and delivers a clean structured summary in seconds. No copy-pasting required.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 8l6 6 6-6"/></svg></div>
+      <div class="feat-name">Language agent</div>
+      <div class="feat-desc">Explains any concept in your language — Tamil, Hindi, Spanish, Arabic and 47 more. Real explanations, not translations.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+      <div class="feat-name">Study planner</div>
+      <div class="feat-desc">Analyses your goals and exam dates, then builds a realistic daily plan — not generic advice, your actual schedule.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></div>
+      <div class="feat-name">Career agent</div>
+      <div class="feat-desc">Reviews your resume, finds matching jobs, and prepares you for interviews — tailored to your field and experience.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20"/></svg></div>
+      <div class="feat-name">50+ languages</div>
+      <div class="feat-desc">Built from the ground up for global students. Every single feature works in every language — not just English.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.416 22 12c0-5.523-4.477-10-10-10z"/></svg></div>
+      <div class="feat-name">Open source</div>
+      <div class="feat-desc">100% open source under MIT. Fork it, extend it, contribute to it. Built by students, for students.</div>
+    </div>
+  </div>
+</section>
+
+<section class="languages" id="languages">
+  <div class="section-eyebrow">GLOBAL</div>
+  <h2 class="section-title">Your language.<br>Your learning.</h2>
+  <p class="section-sub">No student should be left behind because of language. Clextron speaks yours.</p>
+  <div class="lang-pills">
+    <span class="lpill">English</span><span class="lpill">Tamil</span><span class="lpill">Hindi</span><span class="lpill">Telugu</span><span class="lpill">Kannada</span><span class="lpill">Malayalam</span><span class="lpill">Bengali</span><span class="lpill">Urdu</span><span class="lpill">Marathi</span><span class="lpill">Gujarati</span><span class="lpill">Punjabi</span><span class="lpill">Spanish</span><span class="lpill">French</span><span class="lpill">Portuguese</span><span class="lpill">Arabic</span><span class="lpill">Chinese</span><span class="lpill">Japanese</span><span class="lpill">Korean</span><span class="lpill">German</span><span class="lpill">Italian</span><span class="lpill">Turkish</span><span class="lpill">Russian</span><span class="lpill">Indonesian</span><span class="lpill">Swahili</span><span class="lpill">+ 26 more</span>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-big"><div class="stat-num">50+</div><div class="stat-name">Languages supported</div></div>
+    <div class="stat-big"><div class="stat-num">4</div><div class="stat-name">Autonomous AI agents</div></div>
+    <div class="stat-big"><div class="stat-num">MIT</div><div class="stat-name">Open source license</div></div>
+  </div>
+</section>
+
+<section class="oss" id="oss">
+  <div class="oss-card">
+    <div class="oss-left">
+      <h2>Open source.<br>Always free.</h2>
+      <p>Clextron is built in the open. Every line of code is on GitHub — fork it, contribute to it, build on top of it. No lock-in, ever.</p>
+      <div class="oss-btns">
+        <a class="btn btn-primary" href="https://github.com/Cletrix-Labs/Clextron" target="_blank">View on GitHub &rarr;</a>
+        <a class="btn" href="https://github.com/Cletrix-Labs/Clextron/issues" target="_blank">Contribute</a>
+      </div>
+    </div>
+    <div class="code-block">
+      <div><span class="c"># clone clextron</span></div>
+      <div><span class="kw">git</span> clone github.com/Cletrix-Labs/Clextron</div>
+      <div><span class="kw">cd</span> Clextron</div>
+      <div></div>
+      <div><span class="c"># install & run</span></div>
+      <div><span class="kw">pip</span> install <span class="str">-r requirements.txt</span></div>
+      <div><span class="fn">uvicorn</span> app:app <span class="str">--reload</span></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-left">Built with &hearts; by <strong>Cletrix Labs</strong> &mdash; India &nbsp;&middot;&nbsp; &copy; 2026</div>
+  <div class="footer-links">
+    <a href="https://github.com/Cletrix-Labs/Clextron" target="_blank">GitHub</a>
+    <a href="https://github.com/Cletrix-Labs/Clextron/blob/main/LICENSE" target="_blank">License</a>
+    <a href="https://github.com/Cletrix-Labs/Clextron/issues" target="_blank">Issues</a>
+    <a href="dashboard.html">Dashboard</a>
+  </div>
+</footer>
+
+<script>
+function runAgent(){
+  const topic=document.getElementById('topic').value.trim()||'machine learning';
+  const out=document.getElementById('output');
+  out.classList.remove('live');
+  out.textContent='Agent initialising...';
+  const result=`> Research complete: "${topic}"\n\nSummary: ${topic} is a foundational concept with applications across modern engineering and science.\n\nKey concepts:\n  1. Core mathematical principles and theory\n  2. Practical real-world applications\n  3. Current research directions (2025-2026)\n\nStudy plan:\n  Week 1 — Foundations and theory\n  Week 2 — Hands-on implementation\n  Week 3 — Project and review`;
+  setTimeout(()=>{
+    out.textContent='';
+    out.classList.add('live');
+    let i=0;
+    const iv=setInterval(()=>{
+      if(i<result.length){out.textContent=result.substring(0,i+2);i+=2;}
+      else clearInterval(iv);
+    },14);
+  },700);
+}
+document.getElementById('topic').addEventListener('keydown',e=>{if(e.key==='Enter')runAgent()});
+</script>
+</body>
+</html>
