@@ -5,7 +5,7 @@ import os
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
 
-from agents.research_agent import SUPPORTED_LANGUAGES
+from agents.research_agent import resolve_language_name
 
 
 def _build_model() -> ChatGoogleGenerativeAI:
@@ -29,12 +29,7 @@ def explain_concept(concept: str, language: str = "english") -> str:
     if not concept or not concept.strip():
         raise ValueError("concept must not be empty")
 
-    language_lower = language.lower().strip()
-    if language_lower not in SUPPORTED_LANGUAGES:
-        supported = ", ".join(SUPPORTED_LANGUAGES.keys())
-        raise ValueError(f"Language not supported. Choose from: {supported}")
-
-    lang_name = SUPPORTED_LANGUAGES[language_lower]
+    _language_key, lang_name = resolve_language_name(language)
 
     system_prompt = (
         f"You are Clextron's language agent. Explain complex concepts clearly and simply. "
