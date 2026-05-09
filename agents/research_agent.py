@@ -14,18 +14,75 @@ SYSTEM_PROMPT = (
 
 SUPPORTED_LANGUAGES = {
     "english": "English",
+    "afrikaans": "Afrikaans",
+    "amharic": "Amharic",
     "hindi": "Hindi",
+    "bengali": "Bengali",
+    "bulgarian": "Bulgarian",
+    "chinese": "Chinese (Simplified)",
+    "croatian": "Croatian",
+    "czech": "Czech",
+    "danish": "Danish",
+    "dutch": "Dutch",
+    "estonian": "Estonian",
+    "filipino": "Filipino",
+    "finnish": "Finnish",
     "tamil": "Tamil",
-    "spanish": "Spanish",
+    "telugu": "Telugu",
+    "kannada": "Kannada",
+    "malayalam": "Malayalam",
+    "marathi": "Marathi",
+    "gujarati": "Gujarati",
+    "punjabi": "Punjabi",
+    "urdu": "Urdu",
+    "nepali": "Nepali",
+    "sinhala": "Sinhala",
     "french": "French",
-    "portuguese": "Portuguese",
     "german": "German",
+    "greek": "Greek",
+    "hausa": "Hausa",
+    "hebrew": "Hebrew",
+    "hungarian": "Hungarian",
+    "indonesian": "Indonesian",
     "italian": "Italian",
+    "spanish": "Spanish",
+    "portuguese": "Portuguese",
     "japanese": "Japanese",
     "korean": "Korean",
-    "chinese": "Chinese (Simplified)",
+    "latvian": "Latvian",
+    "lithuanian": "Lithuanian",
+    "malay": "Malay",
+    "norwegian": "Norwegian",
+    "persian": "Persian",
+    "polish": "Polish",
+    "romanian": "Romanian",
+    "russian": "Russian",
+    "serbian": "Serbian",
+    "slovak": "Slovak",
+    "slovenian": "Slovenian",
+    "swahili": "Swahili",
+    "swedish": "Swedish",
+    "thai": "Thai",
+    "turkish": "Turkish",
+    "ukrainian": "Ukrainian",
+    "vietnamese": "Vietnamese",
+    "yoruba": "Yoruba",
+    "zulu": "Zulu",
     "arabic": "Arabic",
 }
+
+
+def normalize_language_key(language: str) -> str:
+    return language.lower().strip()
+
+
+def resolve_language_name(language: str) -> tuple[str, str]:
+    language_key = normalize_language_key(language)
+    if language_key not in SUPPORTED_LANGUAGES:
+        supported = ", ".join(SUPPORTED_LANGUAGES.keys())
+        raise ValueError(f"Language not supported. Choose from: {supported}")
+
+    return language_key, SUPPORTED_LANGUAGES[language_key]
 
 
 def _build_model() -> ChatGoogleGenerativeAI:
@@ -46,12 +103,7 @@ def research_topic(topic: str, language: str = "english") -> str:
     if not topic or not topic.strip():
         raise ValueError("topic must not be empty")
 
-    language_lower = language.lower().strip()
-    if language_lower not in SUPPORTED_LANGUAGES:
-        supported = ", ".join(SUPPORTED_LANGUAGES.keys())
-        raise ValueError(f"Language not supported. Choose from: {supported}")
-
-    lang_name = SUPPORTED_LANGUAGES[language_lower]
+    _language_key, lang_name = resolve_language_name(language)
     system_msg = f"{SYSTEM_PROMPT} Respond in {lang_name}."
 
     prompt = ChatPromptTemplate.from_messages(
